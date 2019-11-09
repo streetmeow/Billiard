@@ -125,14 +125,14 @@ public:
 
 			//correction of position of ball
 			// Please uncomment this part because this correction of ball position is necessary when a ball collides with a wall
-			/*if(tX >= (4.5 - M_RADIUS))
+			if(tX >= (4.5 - M_RADIUS))
 				tX = 4.5 - M_RADIUS;
 			else if(tX <=(-4.5 + M_RADIUS))
 				tX = -4.5 + M_RADIUS;
 			else if(tZ <= (-3 + M_RADIUS))
 				tZ = -3 + M_RADIUS;
 			else if(tZ >= (3 - M_RADIUS))
-				tZ = 3 - M_RADIUS;*/
+				tZ = 3 - M_RADIUS;
 			
 			this->setCenter(tX, cord.y, tZ);
 		}
@@ -503,10 +503,12 @@ bool Display(float timeDelta)
 	return true;
 }
 
+
 LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	static bool wire = false;
 	static bool isReset = true;
+	static bool check = false;
     static int old_x = 0;
     static int old_y = 0;
     static enum { WORLD_MOVE, LIGHT_MOVE, BLOCK_MOVE } move = WORLD_MOVE;
@@ -534,13 +536,28 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				
 				D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
 				D3DXVECTOR3	whitepos = g_sphere[3].getCenter();
-				double theta = acos(sqrt(pow(targetpos.x - whitepos.x, 2)) / sqrt(pow(targetpos.x - whitepos.x, 2) +
+				D3DXVECTOR3 yellowpos = g_sphere[2].getCenter();
+				double thetaW = acos(sqrt(pow(targetpos.x - whitepos.x, 2)) / sqrt(pow(targetpos.x - whitepos.x, 2) +
 					pow(targetpos.z - whitepos.z, 2)));		// 기본 1 사분면
-				if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x >= 0) { theta = -theta; }	//4 사분면
-				if (targetpos.z - whitepos.z >= 0 && targetpos.x - whitepos.x <= 0) { theta = PI - theta; } //2 사분면
-				if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x <= 0){ theta = PI + theta; } // 3 사분면
-				double distance = sqrt(pow(targetpos.x - whitepos.x, 2) + pow(targetpos.z - whitepos.z, 2));
-				g_sphere[3].setPower(distance * cos(theta), distance * sin(theta));
+				double thetaY = acos(sqrt(pow(targetpos.x - yellowpos.x, 2)) / sqrt(pow(targetpos.x - yellowpos.x, 2) +
+					pow(targetpos.z - yellowpos.z, 2)));		// 기본 1 사분면
+				if (check == true) {
+					if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x >= 0) { thetaW = -thetaW; }	//4 사분면
+					if (targetpos.z - whitepos.z >= 0 && targetpos.x - whitepos.x <= 0) { thetaW = PI - thetaW; } //2 사분면
+					if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x <= 0) { thetaW = PI + thetaW; } // 3 사분면
+					double distance = sqrt(pow(targetpos.x - whitepos.x, 2) + pow(targetpos.z - whitepos.z, 2));
+					g_sphere[3].setPower(distance * cos(thetaW), distance * sin(thetaW));
+					check = false;
+				}
+				else {
+					if (targetpos.z - yellowpos.z <= 0 && targetpos.x - yellowpos.x >= 0) { thetaY = -thetaY; }	//4 사분면
+					if (targetpos.z - yellowpos.z >= 0 && targetpos.x - yellowpos.x <= 0) { thetaY = PI - thetaY; } //2 사분면
+					if (targetpos.z - yellowpos.z <= 0 && targetpos.x - yellowpos.x <= 0) { thetaY = PI + thetaY; } // 3 사분면
+					double distance = sqrt(pow(targetpos.x - yellowpos.x, 2) + pow(targetpos.z - yellowpos.z, 2));
+					g_sphere[2].setPower(distance * cos(thetaY), distance * sin(thetaY));
+					check = true;
+				}
+
 
 				break;
 
