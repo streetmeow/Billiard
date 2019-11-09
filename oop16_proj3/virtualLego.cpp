@@ -101,14 +101,16 @@ public:
 	
     bool hasIntersected(CSphere& ball) 
 	{
-		// Insert your code here.
-
+		double distance = sqrt(pow(ball.center_x - center_x, 2) + pow(ball.center_y - center_y, 2) + pow(ball.center_z - ball.center_z, 2));
+		if (distance <= M_RADIUS) return true;
 		return false;
 	}
 	
 	void hitBy(CSphere& ball) 
 	{ 
-		// Insert your code here.
+		if (hasIntersected(ball) == true) {
+			
+		}
 	}
 
 	void ballUpdate(float timeDiff) 
