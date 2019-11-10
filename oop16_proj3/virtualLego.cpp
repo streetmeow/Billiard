@@ -52,6 +52,7 @@ private :
 	float					m_velocity_x;
 	float					m_velocity_z;
 
+
 public:
     CSphere(void)
     {
@@ -131,14 +132,14 @@ public:
 
 			//correction of position of ball
 			// Please uncomment this part because this correction of ball position is necessary when a ball collides with a wall
-			if(tX >= (4.5 - M_RADIUS))
+			/*if(tX >= (4.5 - M_RADIUS))
 				tX = 4.5 - M_RADIUS;
 			else if(tX <=(-4.5 + M_RADIUS))
 				tX = -4.5 + M_RADIUS;
 			else if(tZ <= (-3 + M_RADIUS))
 				tZ = -3 + M_RADIUS;
 			else if(tZ >= (3 - M_RADIUS))
-				tZ = 3 - M_RADIUS;
+				tZ = 3 - M_RADIUS;*/
 			
 			this->setCenter(tX, cord.y, tZ);
 		}
@@ -248,9 +249,7 @@ public:
 	bool hasIntersected(CSphere& ball) 
 	{
 		D3DXVECTOR3 bpos = ball.getCenter();
-		if (bpos.x >= m_width - 0.21 || bpos.x <= 0.21 - m_width || bpos.z >= m_height - 0.21 || bpos.z <= 0.21 - m_height) {
-			return true;
-		}
+		if (bpos.x >= 4.29 || bpos.x <= -4.29 || bpos.z >= 2.79 || bpos.z <= -2.79) return true;
 		return false;
 	}
 
@@ -258,8 +257,21 @@ public:
 	{
 		D3DXVECTOR3 bpos = ball.getCenter();
 		if (hasIntersected(ball) == true) {
-			if (bpos.x >= m_width - 0.21) {
-
+			if (bpos.x >= 4.29) {
+				ball.setCenter(bpos.x - 0.05, bpos.y, bpos.z);
+				ball.setPower(ball.getVelocity_X() * (-0.8), ball.getVelocity_Z());
+			}
+			if (bpos.x <= -4.29) {
+				ball.setCenter(bpos.x + 0.05, bpos.y, bpos.z);
+				ball.setPower(ball.getVelocity_X() * (-0.8), ball.getVelocity_Z());
+			}
+			if (bpos.z >= 2.79) {
+				ball.setCenter(bpos.x, bpos.y, bpos.z - 0.05);
+				ball.setPower(ball.getVelocity_X(), ball.getVelocity_Z() * (-0.8));
+			}
+			if (bpos.z <= -2.79) {
+				ball.setCenter(bpos.x, bpos.y, bpos.z + 0.05);
+				ball.setPower(ball.getVelocity_X(), ball.getVelocity_Z() * (-0.8));
 			}
 		}
 	}    
