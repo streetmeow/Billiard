@@ -101,15 +101,19 @@ public:
 	
     bool hasIntersected(CSphere& ball) 
 	{
-		double distance = sqrt(pow(ball.center_x - center_x, 2) + pow(ball.center_y - center_y, 2) + pow(ball.center_z - ball.center_z, 2));
-		if (distance <= M_RADIUS) return true;
+		double distance = sqrt(pow(ball.center_x - this->center_x, 2) + pow(ball.center_z - this->center_z, 2));
+		if (distance < M_RADIUS * 2) return true;
 		return false;
 	}
 	
 	void hitBy(CSphere& ball) 
 	{ 
 		if (hasIntersected(ball) == true) {
-			
+			double sin = sqrt(pow(this->center_x - ball.center_x, 2)) / sqrt(pow(this->center_x - ball.center_x, 2) +
+				pow(this->center_z - ball.center_z, 2)) * 0.7;
+			double cos = sqrt(pow(this->center_z - ball.center_z, 2)) / sqrt(pow(this->center_x - ball.center_x, 2) +
+				pow(this->center_z - ball.center_z, 2)) * 0.7;
+			this->setPower(ball.getVelocity_X()*cos - this->getVelocity_X()*sin, ball.getVelocity_Z()*sin + this->getVelocity_Z()*cos);
 		}
 	}
 
@@ -243,13 +247,21 @@ public:
 	
 	bool hasIntersected(CSphere& ball) 
 	{
-		// Insert your code here.
+		D3DXVECTOR3 bpos = ball.getCenter();
+		if (bpos.x >= m_width - 0.21 || bpos.x <= 0.21 - m_width || bpos.z >= m_height - 0.21 || bpos.z <= 0.21 - m_height) {
+			return true;
+		}
 		return false;
 	}
 
 	void hitBy(CSphere& ball) 
 	{
-		// Insert your code here.
+		D3DXVECTOR3 bpos = ball.getCenter();
+		if (hasIntersected(ball) == true) {
+			if (bpos.x >= m_width - 0.21) {
+
+			}
+		}
 	}    
 	
 	void setPosition(float x, float y, float z)
