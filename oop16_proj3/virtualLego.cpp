@@ -103,28 +103,59 @@ public:
     bool hasIntersected(CSphere& ball) 
 	{
 		double distance = sqrt(pow(ball.center_x - this->center_x, 2) + pow(ball.center_z - this->center_z, 2));
-		if (distance < M_RADIUS * 2) return true;
+		if (distance < M_RADIUS * 2 + 0.01) return true;
 		return false;
 	}
 	
 	void hitBy(CSphere& ball) 
 	{ 
-		if (hasIntersected(ball) == true) {
-			double cos = sqrt(pow(this->center_x - ball.center_x, 2)) / sqrt(pow(this->center_x - ball.center_x, 2) +
-				pow(this->center_z - ball.center_z, 2)) * 0.7;
-			double sin = sqrt(pow(this->center_z - ball.center_z, 2)) / sqrt(pow(this->center_x - ball.center_x, 2) +
-				pow(this->center_z - ball.center_z, 2)) * 0.7;
-			double speedofX = ball.getVelocity_X()*cos - this->getVelocity_X()*sin;
-			double speedofZ = ball.getVelocity_Z()*sin + this->getVelocity_Z()*cos;
-			double vectX = speedofX / (speedofX + speedofZ) * 0.01;
-			double vectZ = speedofZ / (speedofX + speedofZ) * 0.01;
-			this->setCenter(this->getCenter().x + vectX, this->getCenter().y, this->getCenter().z + vectZ);
-			this->setPower(speedofX,speedofZ);
-			/*단위벡터로 처리한다는 발상이었으나 에러 발생. 범위설정에 문제가 있었던 것으로 보임. 내일 더 많은
-			자료를 찾아보며 단위벡터를 더 효과적으로 처리할 방법이 필요할 것으로 보임.*/
-		}
-	}
+		if (hasIntersected(ball))
+		{
+			D3DXVECTOR3 avec, a1, a2;
+			float dest;	
+			dest = sqrt(pow(ball.center_x - this->center_x, 2) + pow(ball.center_z - this->center_z, 2));
+			avec = (ball.getCenter() - this->getCenter()) / dest;
 
+			
+			a1 = (avec.x * this->getVelocity_X() + avec.z * this->getVelocity_Z()) * avec;
+			a2 = (avec.x * ball.getVelocity_X() + avec.z * ball.getVelocity_Z()) * avec;
+
+			double v1 = a2.x;
+			double v2 = a2.z;
+			
+			this->setPower(v1, v2);
+			
+
+			
+			
+			if (a1.x > 0 && a2.x < 0) {
+				this->setCenter(this->center_x + 0.01, this->center_y, this->center_z);
+			}
+			else if (a1.z > 0 && a2.z < 0) {
+				this->setCenter(this->center_x, this->center_y, this->center_z - 0.01);
+			}
+			else if (a1.x > 0 && a2.x > 0 && a1.x > a2.x && this->center_x > ball.getCenter().x) {
+				this->setCenter(this->center_x + 0.01, this->center_y, this->center_z);
+			}
+			else if (a1.x > 0 && a2.x > 0 && a1.x < a2.x && this->center_x < ball.getCenter().x) {
+				this->setCenter(this->center_x - 0.01, this->center_y, this->center_z);
+			}
+			else if (a1.x < 0 && a2.x < 0 && a1.x > a2.x && this->center_x > ball.getCenter().x) {
+				this->setCenter(this->center_x + 0.01, this->center_y, this->center_z);
+			}
+			else if (a1.x < 0 && a2.x < 0 && a1.x < a2.x && this->center_x < ball.getCenter().x) {
+				this->setCenter(this->center_x - 0.01, this->center_y, this->center_z);
+			}
+			
+		}
+		//maybe spin will be written here.
+		
+	}
+	
+	void moveDir(double sX, double sZ)
+	{
+
+	}
 	void ballUpdate(float timeDiff) 
 	{
 		const float TIME_SCALE = 3.3;
