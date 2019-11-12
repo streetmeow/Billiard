@@ -147,6 +147,14 @@ public:
 				this->setCenter(this->center_x - 0.01, this->center_y, this->center_z);
 			}
 			
+			else if (a1.x == 0 && a2.x > 0) {
+				this->setCenter(this->center_x - 0.01, this->center_y, this->center_z);
+			}
+			
+			else if (a1.x == 0 && a2.x < 0 ) {
+				this->setCenter(this->center_x + 0.01, this->center_y, this->center_z);
+			}
+			
 		}
 		//maybe spin will be written here.
 		
@@ -572,7 +580,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	static bool wire = false;
 	static bool isReset = true;
-	static bool check = false;
+	static bool check = true;
     static int old_x = 0;
     static int old_y = 0;
     static enum { WORLD_MOVE, LIGHT_MOVE, BLOCK_MOVE } move = WORLD_MOVE;
